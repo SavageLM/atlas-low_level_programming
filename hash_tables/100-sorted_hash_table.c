@@ -5,7 +5,7 @@
  * @size: size of array
  * Return: Pointer to table or NULL
  */
-shash_table_t *hash_table_create(unsigned long int size)
+shash_table_t *shash_table_create(unsigned long int size)
 {
 	shash_table_t *newhash;
 
@@ -37,7 +37,7 @@ shash_table_t *hash_table_create(unsigned long int size)
 int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 {
 	shash_node_t *newnode, *tmp, *tmp2;
-	unsigned long key_idx, i;
+	unsigned long key_idx;
 
 	if (ht == NULL || key == NULL || *key == '\0' || value == NULL)
 		return (0);
@@ -56,20 +56,26 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 	if (!newnode)
 		return (0);
 	newnode->key = strdup(key), newnode->value = strdup(value);
-	newnode->next = NULL, tmp->next = newnode;
+	newnode->next = ht->array[key_idx], ht->array[key_idx] = newnode;
 	if (!ht->shead)
 	{
 		ht->shead = newnode, ht->stail = newnode;
 		newnode->sprev = NULL, newnode->snext = NULL;
 		return (1);
 	}
+	if (strcmp(ht->shead->key, key) > 0)
+	{
+		newnode->snext = ht->shead, newnode->sprev = NULL;
+		ht->shead->sprev = newnode, ht->shead = newnode;
+		return (1);
+	}
 	tmp2 = ht->shead;
-	for (; tmp2; tmp2->snext)
+	for (; tmp2->snext; tmp2 = tmp2->snext)
 	{
 		if (strcmp(tmp2->key, key) > 0)
 		{
 			newnode->sprev = tmp2->sprev, newnode->snext = tmp2;
-			tmp2->sprev->snext = newnode;
+			tmp2->sprev->snext = newnode, tmp2->sprev = newnode;
 			return (1);
 		}
 	}
@@ -115,13 +121,13 @@ void shash_table_print(const shash_table_t *ht)
 	if (!ht)
 		return;
 	tmp = ht->shead;
-	putchar("{");
-	for (; tmp; tmp->snext)
+	putchar('{');
+	for (; tmp; tmp = tmp->snext)
 	{
 		printf("'%s': '%s'%s", tmp->key, tmp->value, tmp->snext ? ", " : "");
 	}
-	puthar("}");
-	putchar("\n");
+	putchar('}');
+	putchar('\n');
 }
 
 /**
@@ -135,13 +141,13 @@ shash_node_t *tmp;
 	if (!ht)
 		return;
 	tmp = ht->stail;
-	putchar("{");
-	for (; tmp; tmp->sprev)
+	putchar('{');
+	for (; tmp; tmp = tmp->sprev)
 	{
 		printf("'%s': '%s'%s", tmp->key, tmp->value, tmp->sprev ? ", " : "");
 	}
-	puthar("}");
-	putchar("\n");
+	putchar('}');
+	putchar('\n');
 }
 
 /**
