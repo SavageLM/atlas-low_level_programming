@@ -39,8 +39,10 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 	shash_node_t *newnode, *tmp, *tmp2;
 	unsigned long key_idx;
 
-	if (ht == NULL || key == NULL || *key == '\0' || value == NULL)
+	if (ht == NULL || key == NULL || *key == '\0')
 		return (0);
+	if (value == NULL)
+		value = "";
 	key_idx = hash_djb2((const unsigned char *)key) % ht->size;
 	tmp = ht->array[key_idx];
 	for (; tmp; tmp = tmp->next)
