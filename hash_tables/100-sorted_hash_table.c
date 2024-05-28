@@ -72,7 +72,7 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 		return (1);
 	}
 	tmp2 = ht->shead;
-	for (; tmp2->snext; tmp2 = tmp2->snext)
+	for (; tmp2; tmp2 = tmp2->snext)
 	{
 		if (strcmp(tmp2->key, key) > 0)
 		{
