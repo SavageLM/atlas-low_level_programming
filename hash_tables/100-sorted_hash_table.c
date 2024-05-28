@@ -79,9 +79,8 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 			return (1);
 		}
 	}
-	tmp2->snext = newnode,
-	newnode->sprev = tmp2, newnode->snext = NULL;
-	ht->stail = newnode;
+	newnode->sprev = ht->stail, newnode->snext = NULL;
+	ht->stail->snext = newnode, ht->stail = newnode;
 	return (1);
 }
 /**
