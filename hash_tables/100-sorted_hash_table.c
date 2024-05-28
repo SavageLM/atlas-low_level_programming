@@ -1,5 +1,7 @@
 #include "hash_tables.h"
 
+void recurse_node(shash_node_t *node);
+
 /**
  * shash_table_create - Creates a hash table
  * @size: size of array
@@ -132,7 +134,7 @@ void shash_table_print(const shash_table_t *ht)
 }
 
 /**
- * shash_table_print_rev - prints the sorted hash table recursively
+ * shash_table_print_rev - prints the sorted hash table in reverse
  * @ht: hash table to check
  */
 void shash_table_print_rev(const shash_table_t *ht)
@@ -141,12 +143,9 @@ shash_node_t *tmp;
 
 	if (!ht)
 		return;
-	tmp = ht->stail;
+	tmp = ht->shead;
 	putchar('{');
-	for (; tmp; tmp = tmp->sprev)
-	{
-		printf("'%s': '%s'%s", tmp->key, tmp->value, tmp->sprev ? ", " : "");
-	}
+	recurse_node(tmp);
 	putchar('}');
 	putchar('\n');
 }
@@ -172,4 +171,19 @@ void shash_table_delete(shash_table_t *ht)
 	}
 	free(ht->array);
 	free(ht);
+}
+
+/**
+ * recurse_node - prints the sorted hash table recursively
+ * @node: hash table to check
+ */
+void recurse_node(shash_node_t *node)
+{
+	if (node->snext == NULL)
+		printf("'%s': '%s'%s", node->key, node->value, node->sprev ? ", " : "");
+	else
+	{
+		recurse_node(node->snext);
+		printf("'%s': '%s'%s", node->key, node->value, node->sprev ? ", " : "");
+	}
 }
